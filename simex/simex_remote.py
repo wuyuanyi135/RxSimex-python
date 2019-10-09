@@ -241,7 +241,12 @@ class SimexRemote(SimexObject):
 
     def handle_incoming_message(self):
         # blocking
-        buf = self.socket.recv(10240)
+        try:
+            buf = self.socket.recv(10240)
+        except:
+            # disconnected
+            self.disconnect()
+
         self.unpacker.feed(buf)
         for v in self.unpacker:
             try:
