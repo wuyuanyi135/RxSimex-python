@@ -222,7 +222,10 @@ class SimexRemote(SimexObject):
         self.incoming_schduler.schedule(self.incoming_message_task)
 
     def disconnect(self):
-        self.socket.shutdown(socket.SHUT_RDWR)
+        try:
+            self.socket.shutdown(socket.SHUT_RDWR)
+        except:
+            pass
         self.socket.close()
         self.is_connected = False
 
