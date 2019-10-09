@@ -180,8 +180,6 @@ class SimexRemote(SimexObject):
     """
     Main class for access the simex block data.
     """
-    socket_writer: StreamWriter
-    socket_reader: StreamReader
 
     def __init__(self, ip: str, port: int):
         """
@@ -189,11 +187,9 @@ class SimexRemote(SimexObject):
         :param port:
         """
         super().__init__()
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket = None
         self.ip = ip
         self.port = port
-        self.socket_reader = None
-        self.socket_writer = None
         self.is_connected = False
         self.unpacker = msgpack.Unpacker()
         self.cq = CompletionQueue()
@@ -220,11 +216,13 @@ class SimexRemote(SimexObject):
             .pipe(operators.map(lambda vals: SimexSimulationState(vals[0])))
 
     def connect(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.ip, self.port))
         self.is_connected = True
         self.incoming_schduler.schedule(self.incoming_message_task)
 
     def disconnect(self):
+        self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
         self.is_connected = False
 
