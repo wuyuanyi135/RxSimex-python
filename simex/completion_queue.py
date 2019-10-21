@@ -31,7 +31,8 @@ class CompletionTask(object):
 
     def resolve(self, data):
         self.observer.on_next(data)
-        self.observer.on_completed()
+        if self.auto_remove:
+            self.observer.on_completed()
 
     def error(self, ex):
         self.observer.on_error(ex)
