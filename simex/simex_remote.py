@@ -116,6 +116,7 @@ class SimexPort(SimexObject):
             try:
                 self.name = message[b"name"]
                 self.id = message[b"id"]
+                self.data = message[b"data"]
                 try:
                     # update report does not contain dim and type_id
                     self.dim = np.array(message[b"dimensions"], dtype=int)
